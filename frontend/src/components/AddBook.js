@@ -3,6 +3,9 @@ import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate, Link } from 'react-router-dom';
 
+import { toast } from 'react-toastify'; // Import toast from react-toastify
+import 'react-toastify/dist/ReactToastify.css';
+
 const AddBook = () => {
   const [formData, setFormData] = useState({
     title: '',
@@ -52,11 +55,14 @@ const AddBook = () => {
     });
 
         if (response.status === 200) {
+          toast.success('Book added successfully.');
           console.log('Book added successfully.');
         } else {
+          toast.error(`Unexpected status code: ${response.status}`);
           console.log(`Unexpected status code: ${response.status}`);
         }
       } catch (error) {
+        toast.error('Error registering book. Please try again.')
         console.error('Error registering book:', error.message || JSON.stringify(error));
       }
   };
@@ -91,7 +97,7 @@ const AddBook = () => {
               <label htmlFor="genreId" className="form-label">Genre ID</label>
               <input type="text" className="form-control" id="genreId" name="genre_id" value={formData.genreId} onChange={handleInputChange} />
             </div>
-            <button type="submit" className="btn btn-primary">Register</button>
+            <button type="submit" className="btn btn-primary" >Add Book</button>
 
             <button
               className="btn btn-primary btn-sm mx-4"

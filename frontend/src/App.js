@@ -6,7 +6,7 @@ import AddBook from './components/AddBook';
 import AllBook from './components/AllBook';
 import UpdateBook from './components/UpdateBook';
 import AllAuthors from './components/AllAuthor';
-import AddUser from './components/AddUser';
+import AddUser from './components/Register';
 
 
 function App() {
