@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 
 const UpdateBook = () => {
-  const { id } = useParams();
+  const id  = useParams();
   console.log(id)
   const navigate = useNavigate();
   // const location = useLocation();

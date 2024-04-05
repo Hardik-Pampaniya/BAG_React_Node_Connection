@@ -54,8 +54,9 @@ const AddBook = () => {
       }
     });
 
-        if (response.status === 200) {
+        if (response.status === 201) {
           toast.success('Book added successfully.');
+          navigate('/allBooks')
           console.log('Book added successfully.');
         } else {
           toast.error(`Unexpected status code: ${response.status}`);
