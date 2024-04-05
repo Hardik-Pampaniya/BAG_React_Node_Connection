@@ -1,0 +1,33 @@
+/* AllBook.css */
+
+.navbar-brand {
+    font-size: 24px;
+  }
+  
+  .btn {
+    font-size: 14px;
+  }
+  
+  .table th,
+  .table td {
+    vertical-align: middle;
+  }
+  
+  .table th {
+    text-align: center;
+  }
+  
+  .table td {
+    text-align: left;
+  }
+  
+  .btn-primary,
+  .btn-warning {
+    font-weight: bold;
+  }
+  
+  .btn-primary:hover,
+  .btn-warning:hover {
+    font-weight: bold;
+  }
+  

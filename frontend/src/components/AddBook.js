@@ -66,7 +66,6 @@ const AddBook = () => {
       <div className="row justify-content-center">
         <div className="col-md-6">
           <h2>Register Book</h2>
-          <h2><button className="btn btn-primary btn-sm mx-5" type="button" onClick={handleSearch}>Search</button></h2>
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
               <label htmlFor="title" className="form-label">Title</label>

@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt');
 
 
 const generateToken = (user) => {
-    const payload = { email: user.email, password: user.password };
+    const payload = { email: user.email, password: user.password, image: user.image };
     return jwt.sign(payload, 'crud', { expiresIn: '24h' });
 };
 
@@ -40,7 +40,7 @@ const checkLogin = async (req, res) => {
 
 const addUser = async(req, res) => {
     try{
-        const { email, password ,mobile ,image} = req.body;
+        const { email, password  ,image} = req.body;
         if (!email || !password ) {
             return res.status(500).send({
                 message: 'add all fields'
@@ -55,7 +55,7 @@ const addUser = async(req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 10)
 
-        const data = await db.query("INSERT INTO user (email, password,mobile,image) VALUES (?, ?,?,?)", [email, hashedPassword,mobile,image]);
+        const data = await db.query("INSERT INTO user (email, password, image) VALUES (?, ?, ?)", [email, hashedPassword, image]);
 
         if (!data) {
             return res.status(404).send({
@@ -68,12 +68,16 @@ const addUser = async(req, res) => {
         })
         
     }catch(error){
-        console.log(error)
-        res.send({
-            message: 'error in addUser api!'
-        })
+        console.error(error); // Log the specific error
+        return res.status(500).send({ message: error.message }); // Return the actual error message
     }
 }
 
 
-module.exports = { checkLogin, addUser };
+const getUser = (req, res) => {
+        res.status(200).json({ message: "success", user: req.user });
+      }
+
+
+
+module.exports = { checkLogin, addUser, getUser };

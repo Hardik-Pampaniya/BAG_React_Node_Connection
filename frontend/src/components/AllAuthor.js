@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Button, Table } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from 'react-router-dom';
 
@@ -10,8 +11,12 @@ const AllAuthors = () => {
 
   const navigate = useNavigate();
 
+  const handleAllBook = () => {
+    navigate('/allBooks');
+  };
+
   const handleClick = () => {
-    navigate('/allAuthors');
+    navigate('/addAuthor');
   };
 
   const handleSearch = () => {
@@ -31,6 +36,11 @@ const AllAuthors = () => {
   const handleEdit = (authorId) => {
     navigate('/updateBook')
     console.log('Edit author with ID:', authorId);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('accessToken');
+    navigate('/');
   };
 
   const handleDelete = (authorId) => {
@@ -85,7 +95,20 @@ const AllAuthors = () => {
 
   return (
     <div className="container mt-5">
-      <h2>All Authors</h2>
+    <nav className="navbar navbar-expand-lg navbar-light bg-light">
+      <div className="container-fluid">
+        <h2 className="navbar-brand">All Authors</h2>
+        <div className="d-flex align-items-center">
+          <Button variant="primary" onClick={handleSearch}>Search</Button>
+          <Button variant="warning" className="mx-3" onClick={handleLogout}>Log Out</Button>
+        </div>
+      </div>
+    </nav>
+
+    <div className="d-flex justify-content-end mb-3">
+      <Button variant="primary" onClick={handleClick}>Add Author</Button>
+      <Button variant="primary" className="mx-3" onClick={handleAllBook}>All Books</Button>
+    </div>
       <table className="table">
         <thead>
           <tr>
@@ -111,12 +134,15 @@ const AllAuthors = () => {
           ))}
         </tbody>
       </table>
-      <button className="btn btn-primary btn-sm" type="button" onClick={handleClick}>Add Author</button>
-      <button className="btn btn-primary btn-sm mx-4" type="button" onClick={handleSearch}>Search</button>
+      {/* <button className="btn btn-primary btn-sm" type="button" onClick={handleClick}>Add Author</button><br></br> */}
+      {/* <button  variant="primary" className="btn btn-primary btn-sm" onClick={handleAllBook}>All Books</button> */}
+      {/* <button className="btn btn-primary btn-sm mx-4" type="button" onClick={handleSearch}>Search</button>  */}
 
-      <button className="btn btn-primary btn-sm mx-5" type="button" onClick={handlePreviousPage} disabled={page === 1}>Previous Page</button>
-      <span className="mx-2">Page {page}</span>
-      <button className="btn btn-primary btn-sm mx-5" type="button" onClick={handleNextPage}>Next Page</button>
+      <div className="d-flex justify-content-between">
+        <Button variant="primary" onClick={handlePreviousPage} disabled={page === 1}>Previous Page</Button>
+        <span className="mx-2">Page {page}</span>
+        <Button variant="primary" onClick={handleNextPage}>Next Page</Button>
+      </div>
     </div>
   );
 };

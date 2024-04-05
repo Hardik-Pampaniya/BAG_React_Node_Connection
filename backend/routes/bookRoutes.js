@@ -3,7 +3,7 @@ const { getAllAuthors, addAuthor, updateAuthor, deleteAuthor } = require("../con
 const { getAllBooks, addBook, updateBoook, deleteBook, getBookById, getImage } = require("../controller/bookController");
 const express = require('express');
 const { searchBooksAndAuthors } = require("../controller/searchController");
-const { checkLogin, addUser } = require("../controller/loginController");
+const { checkLogin, addUser, getUser } = require("../controller/loginController");
 const { verifyToken } = require("../middleware/auth");
 
 const router = express.Router();
@@ -13,6 +13,11 @@ router.post('/login',checkLogin)
 
 //adduser
 router.post('/addUser',addUser)
+
+router.get("/getUser", verifyToken, getUser)
+
+//addauthot
+router.post('/addAuthor', addAuthor);
 
 //all user
 router.get('/allBooks',verifyToken ,getAllBooks)

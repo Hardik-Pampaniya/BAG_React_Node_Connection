@@ -32,36 +32,36 @@ const getAllAuthors = async (req,res) => {
 }
 
 //add author
-const addAuthor = async (req,res)=>{
-    try{
-        const {author_name,biography,genre} = req.body
+const addAuthor = async (req, res) => {
+    try {
+      const { author_id, author_name, biography, genre } = req.body;
+    //   console.log(req.body);
+  
+      const existingAuthor = await Author.findOne({ author_id });
 
-        if(!author_name || !biography || !genre){
-            res.status(409).send({
-                message:"all fields required"
-            })
-        }
-
-        const data = await db.query(`INSERT INTO author (author_name,biography,genre) VALUES (?,?,?)`,[author_name,biography,genre])
-
-        if (!data) {
-            return res.status(404).send({
-                message: 'Error in INSERT query!'
-            })
-        }
-
-        res.status(201).send({
-            message: 'Record created!'
-        })
-
-    }catch(error){
-        console.log(error)
-        res.send({
-            message: 'error in add author api!'
-        })
+    //   console.log(existingAuthor);
+  
+      if (existingAuthor) {
+        return res.status(400).json({ message: 'Author already exists' });
+      }
+    
+  
+      const newAuthor = new Author({
+        author_id,
+        author_name,
+        biography,
+        genre,
+      });
+  
+      await newAuthor.save();
+  
+      res.status(200).json({ message: 'Author added successfully' });
+    } catch (error) {
+      console.error('Error adding author:', error.message);
+      res.status(500).json({ message: 'Internal server error' });
     }
-}
-
+  };
+  
 //update author
 const updateAuthor = async(req,res)=>{
     try {

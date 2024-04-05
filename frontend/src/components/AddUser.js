@@ -9,8 +9,7 @@ const AddBook = () => {
     name: '',
     email: '',
     password: '',
-    confirmPassword: '',
-    mobile: ''
+    confirmPassword: ''
   });
 
   // Function to handle form field changes
@@ -60,7 +59,7 @@ const AddBook = () => {
       <div className="row justify-content-center">
         <div className="col-md-6">
           <h2>Sign Up</h2>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} >
             <div className="mb-3">
               <label htmlFor="name" className="form-label">Name</label>
               <input type="text" required className="form-control" id="name" name="name" value={formData.name} onChange={handleInputChange} />
@@ -76,10 +75,6 @@ const AddBook = () => {
             <div className="mb-3">
               <label htmlFor="confirmPassword" className="form-label">Confirm Password</label>
               <input type="password" required className="form-control" id="confirmPassword" name="confirmPassword" value={formData.confirmPassword} onChange={handleInputChange} />
-            </div>
-            <div className="mb-3">
-              <label htmlFor="mobile" className="form-label">Mobile</label>
-              <input type="number" required className="form-control" id="mobile" name="mobile" value={formData.mobile} onChange={handleInputChange} />
             </div>
             <div className='mb-3'>
                 <label htmlFor="image" className="form-label">Image</label>
