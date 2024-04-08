@@ -34,7 +34,7 @@ const AllAuthors = () => {
   };
 
   const handleEdit = (authorId) => {
-    navigate('/updateBook')
+    navigate('/updateAuthor')
     console.log('Edit author with ID:', authorId);
   };
 
@@ -43,20 +43,13 @@ const AllAuthors = () => {
     navigate('/');
   };
 
-  const handleDelete = (authorId) => {
-    const xhr = new XMLHttpRequest();
-    xhr.open('DELETE', `http://localhost:5000/deleteAuthor/${authorId}`, true);
-    xhr.onload = function () {
-      if (xhr.status === 200) {
-        console.log('Book deleted successfully');
-      } else {
-        console.error('Failed to delete author. Status:', xhr.status);
-      }
-    };
-    xhr.onerror = function () {
-      console.error('Error deleting author. Network error');
-    };
-    xhr.send();
+  const handleDelete = async (authorId) => {
+    try {
+      await axios.delete(`http://localhost:5000/deleteAuthor/${authorId}`);
+      setAuthors(author.filter(book => book.auhtor_id !== authorId));
+    } catch (error) {
+      console.error('Error deleting book:', error);
+    }
   };
   
   useEffect(() => {

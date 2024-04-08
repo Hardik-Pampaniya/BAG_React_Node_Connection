@@ -40,13 +40,15 @@ const checkLogin = async (req, res) => {
 
 const addUser = async(req, res) => {
     try{
-        const { email, password  ,image} = req.body;
+        const { email, password } = req.body;
         if (!email || !password ) {
             return res.status(500).send({
                 message: 'add all fields'
             })
         }
 
+        const image = req.file.filename
+       
         const [existingEmail] = await db.query('SELECT * FROM user WHERE email = ?', [email]);
 
         if (existingEmail.length > 0) {

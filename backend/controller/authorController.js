@@ -1,5 +1,6 @@
 const { verifyToken } = require('../middleware/auth');
 const db = require('../config/db')
+const mysqlpool = require('../config/db');
 
 const express = require('express')
 
@@ -34,114 +35,72 @@ const getAllAuthors = async (req,res) => {
 //add author
 const addAuthor = async (req, res) => {
     try {
-      const { author_id, author_name, biography, genre } = req.body;
-    //   console.log(req.body);
-  
-      const existingAuthor = await Author.findOne({ author_id });
+        const { author_id, author_name, biography, genre } = req.body;
 
-    //   console.log(existingAuthor);
-  
-      if (existingAuthor) {
-        return res.status(400).json({ message: 'Author already exists' });
-      }
-    
-  
-      const newAuthor = new Author({
-        author_id,
-        author_name,
-        biography,
-        genre,
-      });
-  
-      await newAuthor.save();
-  
-      res.status(200).json({ message: 'Author added successfully' });
+        if (!author_id || !author_name || !biography || !genre ) {
+            return res.status(409).send({
+                message: "all fields are required!"
+            });
+        }
+
+        const [existingAuthor] = await mysqlpool.query(`SELECT * FROM author WHERE author_id = ?`, [author_id]);
+        if (existingAuthor.length > 0) {
+            return res.status(409).send({
+                message: "Author already exists!"
+            });
+        }
+
+        await mysqlpool.query(`INSERT INTO author (author_id, author_name, biography, genre) VALUES (?, ?, ?, ?, ?, ?)`, [author_id, author_name, biography, genre]);
+
+        res.status(201).send({
+            message: 'Record created!'
+        });
     } catch (error) {
-      console.error('Error adding author:', error.message);
-      res.status(500).json({ message: 'Internal server error' });
+        console.log(error);
+        res.status(500).send({
+            message: 'Error in addAuthor API!'
+        });
     }
-  };
+};
   
 //update author
-const updateAuthor = async(req,res)=>{
-    try {
+const updateAuthor = async (req, res) => {
+    const { author_id, author_name, biography, genre} = req.body;
 
-        const authorId = req.params.id
-        if (!authorId) {
-            return res.status(404).send({
-                message: 'invalid id'
-            })
-        }
-
-        const { author_name,biography,genre } = req.body
-
-        // const [existingAuthor] = await db.query(`SELECT * FROM author WHERE author_name = ?`, [author_name])
-        // if (existingAuthor.length > 0) {
-        //     return res.status(409).send({
-        //         message: "Author already exist!"
-        //     })
-        // }
-
-        const data = db.query("UPDATE author SET author_name = ?, biography = ?, genre = ? WHERE author_id = ?", [author_name, biography,genre,authorId])
-
-        if (!data) {
-            return res.status(500).send({
-                message: 'error in update author data!'
-            })
-        }
-        res.status(200).send({
-            message: 'data updated!'
-        })
-
-    } catch (error) {
-        console.log(error)
-        res.send({
-            message: 'error in updateAuthor api!'
-        })
+    if (!author_id || !author_name || !biography || !genre ) {
+        return res.status(400).json({ message: "All fields are required" });
     }
-}
+
+    try {
+        const [AuthorExists] = await mysqlpool.query(`SELECT author_id FROM author WHERE author_id = ?`, [author_id]);
+        if (!AuthorExists.length) {
+            return res.status(400).json({ message: "Author does not exist" });
+        }
+
+        await mysqlpool.query(`UPDATE author SET author_name = ?, biography = ?, genre = ? WHERE author_id = ?`, [author_name, biography, genre, author_id]);
+
+        return res.status(200).json({ message: "success" });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
 
 //delete author
-const deleteAuthor = async (req,res)=>{
+const deleteAuthor = async (req, res) => {
+    const { author_id } = req.params;
+    try {
+        const [AuthorExists] = await mysqlpool.query(`SELECT author_id FROM author WHERE author_id = ?`, [author_id]);
 
-        const authorId = req.params.id;
-      
-        // Check if there are any associated books for the author
-        try {
-            const authorId = req.params.id;
-            
-            if (!authorId) {
-                return res.status(404).send({
-                    message: 'Invalid ID'
-                });
-            }
-        
-            // Check if there are any associated books for the author
-            const books = await db.query('SELECT * FROM book WHERE author_id = ?', [authorId]);
-            if (books.length > 0) {
-                return res.status(400).send({
-                    message: 'Cannot delete author as there are associated books'
-                });
-            }
-        
-            // If no associated books, proceed with author deletion
-            const data = await db.query('DELETE FROM author WHERE author_id = ?', [authorId]);
-            if (!data) {
-                return res.status(500).send({
-                    message: 'Error in deleting author data'
-                });
-            }
-        
-            res.status(200).send({
-                message: 'Author deleted successfully'
-            });
-        } catch (error) {
-            console.error(error);
-            res.status(500).send({
-                message: 'Error in deleteAuthor API'
-            });
+        if (!AuthorExists.length) {
+            return res.status(400).json({ message: "author does not exist" });
         }
-        
+
+        await mysqlpool.query(`DELETE FROM author WHERE author_id = ?`, [author_id]);
+
+        return res.status(200).json({ message: "success" });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
     }
+};
 module.exports = {getAllAuthors,addAuthor,updateAuthor,deleteAuthor}
 

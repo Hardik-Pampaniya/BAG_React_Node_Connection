@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
 const UpdateBook = () => {
-  const { bookId } = useParams();
+  const  {bookId } = useParams();
   const navigate = useNavigate();
 
   const [bookData, setBookData] = useState({
@@ -17,19 +17,14 @@ const UpdateBook = () => {
       try {
         const response = await fetch(`http://localhost:5000/getBookById/${bookId}`);
 
+        console.log(response);
         if (!response.ok) {
           throw new Error('Failed to fetch book details');
         }
 
         const data = await response.json();
-        const bookDetails = data.data;
-
-        if (bookDetails.length > 0) {
-          const { title, description, published_year, quantity_available } = bookDetails[0];
-          setBookData({ title, description, published_year, quantity_available });
-        } else {
-          console.error('Book not found');
-        }
+       setBookData(data.data)
+        
       } catch (error) {
         console.error('Error fetching book details:', error);
       }

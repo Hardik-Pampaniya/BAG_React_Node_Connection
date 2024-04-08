@@ -4,8 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import { Button, Table } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './AllBook.css'; // Custom CSS for styling
+import CookieMessage from './CookieMessage';
 
 const AllBook = () => {
+  const [profile, setProfile] = useState(null)
   const [books, setBooks] = useState([]);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
@@ -57,10 +59,7 @@ const AllBook = () => {
     const fetchBooks = async () => {
       try {
         const token = localStorage.getItem('accessToken');
-        if (!token) {
-          console.log('No token found. User is not authenticated.');
-          return;
-        }
+       
 
         const response = await axios.get(`http://localhost:5000/allBooks?page=${page}&pageSize=${pageSize}`, {
           headers: {
@@ -80,7 +79,37 @@ const AllBook = () => {
     };
 
     fetchBooks();
+    
   }, [page, pageSize]);
+
+  useEffect(()=>{
+    fetchProfile()
+  }, [])
+
+  console.log(profile);
+
+  const fetchProfile = async () => {
+    try {
+      const token = localStorage.getItem('accessToken');
+     
+
+      const response = await axios.get(`http://localhost:5000/profile`, {
+        headers: {
+          Authorization: token,
+        }
+      });
+
+      if (response.status === 404) {
+        alert("No Books Found");
+        return;
+      }
+
+      setProfile(response.data.user);
+      
+    } catch (error) {
+      console.error('Error fetching books:', error);
+    }
+  };
 
   return (
     <div className="container mt-5">
@@ -89,6 +118,7 @@ const AllBook = () => {
           <h2 className="navbar-brand">All Books</h2>
           <div className="d-flex align-items-center">
             <Button variant="primary" onClick={handleSearch}>Search</Button>
+            <img src={`http://localhost:5000/public/profilePics/${profile?.image}`} alt='profile' height={50} width={50} class="rounded-circle"/>
             <Button variant="warning" className="mx-3" onClick={handleLogout}>Log Out</Button>
           </div>
         </div>
@@ -136,6 +166,11 @@ const AllBook = () => {
         <span className="mx-2">Page {page}</span>
         <Button variant="primary" onClick={handleNextPage}>Next Page</Button>
       </div>
+
+      <div className="container mt-5">
+      <CookieMessage /> {/* Render the CookieMessage component */}
+      {/* Rest of your component code... */}
+    </div>
     </div>
   );
 };

@@ -10,8 +10,10 @@ const AddUser = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    image: null
   });
+  console.log(formData.image);
 
   const navigate = useNavigate();
 
@@ -23,6 +25,12 @@ const AddUser = () => {
       [name]: value,
     });
   };
+
+  const handleProfilePic = (e) => {
+    const file = e.target.files[0]
+    setFormData({ ...formData, image: file })
+
+  }
 
   const handleLogin = () => {
     navigate('/');
@@ -42,7 +50,7 @@ const AddUser = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const { password, confirmPassword, email } = formData;
+    const { password, confirmPassword, email, image } = formData;
 
     // Validate email format
     if (!validateEmail(email)) {
@@ -56,6 +64,11 @@ const AddUser = () => {
       return;
     }
 
+    if (!image) {
+      alert("Image Empty");
+      return;
+    }
+
     // Check if passwords match
     if (password !== confirmPassword) {
       alert("Passwords don't match");
@@ -64,7 +77,17 @@ const AddUser = () => {
 
     // If all validations pass, proceed with registration
     try {
-      const response = await axios.post('http://localhost:5000/addUser', formData);
+
+      const formDatatoSend = {
+        email: formData.email,
+        password: formData.password,
+        image: formData.image
+      }
+      const response = await axios.post('http://localhost:5000/addUser', formDatatoSend, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
       if (response.status >= 200) {
         console.log('Registered successfully.');
         toast.success('Registration successful'); // Show toast messag
@@ -97,7 +120,7 @@ const AddUser = () => {
             </div>
             <div className='mb-3'>
               <label htmlFor="image" className="form-label">Image</label>
-              <input type="file" className="form-control" id="image" name="image" value={formData.image} onChange={handleInputChange} />
+              <input type="file" className="form-control" id="image" name="image" accept='image/*' onChange={handleProfilePic} />
             </div>
 
             <div className='button'>

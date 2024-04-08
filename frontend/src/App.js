@@ -19,8 +19,6 @@ function App() {
       <Route path="/updateBook/:bookId" element={<UpdateBook/>}/>
       <Route path="/allAuthors" element={<AllAuthors/>}/>
       <Route path="/addUser" element={<AddUser/>}/>
-      
-
     </Routes>
   );
 }
