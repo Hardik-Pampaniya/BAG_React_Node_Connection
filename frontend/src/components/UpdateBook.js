@@ -1,78 +1,69 @@
 import React, { useState, useEffect } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 const UpdateBook = () => {
-  const id  = useParams();
-  console.log(id)
+  const { bookId } = useParams();
   const navigate = useNavigate();
-  // const location = useLocation();
+
   const [bookData, setBookData] = useState({
-    book_id: '',
     title: '',
     description: '',
     published_year: '',
-    quantity_available: '',
-    author_id: '',
-    genre_id: ''
-  }); 
-
-  // useEffect(() => {
-  //   if (location.state && location.state.bookData) {
-  //     setBookData(location.state.bookData);
-  //   }
-  // }, [location.state]);
+    quantity_available: ''
+  });
 
   useEffect(() => {
     const fetchBookDetails = async () => {
-        try {
-            const response = await fetch(`http://localhost:5000/bookbyid/${id}`);
+      try {
+        const response = await fetch(`http://localhost:5000/getBookById/${bookId}`);
 
-            if (!response.ok) {
-                throw new Error('Failed to fetch book details');
-            }
-
-            const data = await response.json();
-            const resBookData = data.data[0];
-            console.log(data,resBookData);
-
-            setBookData({
-                title: resBookData.title,
-                description: resBookData.description,
-                published_year: resBookData.published_year,
-                quantity_available: resBookData.quantity_available,
-            });
-        } catch (error) {
-            console.error('Error fetching book details:', error);
+        if (!response.ok) {
+          throw new Error('Failed to fetch book details');
         }
+
+        const data = await response.json();
+        const bookDetails = data.data;
+
+        if (bookDetails.length > 0) {
+          const { title, description, published_year, quantity_available } = bookDetails[0];
+          setBookData({ title, description, published_year, quantity_available });
+        } else {
+          console.error('Book not found');
+        }
+      } catch (error) {
+        console.error('Error fetching book details:', error);
+      }
     };
 
     fetchBookDetails();
-}, [id]);
+  }, [bookId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setBookData({ ...bookData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const xhr = new XMLHttpRequest();
-    xhr.open('PUT', `http://localhost:5000/updateBook/${id}`, true); 
-    xhr.setRequestHeader('Content-Type', 'application/json');
 
-    xhr.onload = function () {
-      if (xhr.status === 200) {
+    try {
+      const response = await fetch(`http://localhost:5000/updateBook/${bookId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(bookData)
+      });
+
+      if (response.ok) {
         console.log('Book updated successfully');
         navigate('/allBooks');
       } else {
-        console.error('Failed to update book. Status:', xhr.status);
+        console.error('Failed to update book. Status:', response.status);
       }
-    };
-    xhr.onerror = function () {
-      console.error('Error updating book. Network error');
-    };
-    xhr.send(JSON.stringify(bookData));
+    } catch (error) {
+      console.error('Error updating book:', error);
+    }
   };
 
   return (
@@ -95,7 +86,6 @@ const UpdateBook = () => {
           <label htmlFor="quantity_available" className="form-label">Quantity Available</label>
           <input type="text" className="form-control" id="quantity_available" name="quantity_available" value={bookData.quantity_available} onChange={handleChange} />
         </div>
-        
         <button type="submit" className="btn btn-primary">Update Book</button>
       </form>
     </div>

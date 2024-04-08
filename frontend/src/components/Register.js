@@ -8,7 +8,6 @@ import './addUser.css';
 
 const AddUser = () => {
   const [formData, setFormData] = useState({
-    name: '',
     email: '',
     password: '',
     confirmPassword: ''
@@ -84,10 +83,6 @@ const AddUser = () => {
         <div className="col-md-6">
           <h2>Sign Up</h2>
           <form onSubmit={handleSubmit}>
-            <div className="mb-3">
-              <label htmlFor="name" className="form-label">Name</label>
-              <input type="text" required className="form-control" id="name" name="name" value={formData.name} onChange={handleInputChange} />
-            </div>
             <div className="mb-3">
               <label htmlFor="email" className="form-label">Email</label>
               <input type="email" required className="form-control" id="email" name="email" value={formData.email} onChange={handleInputChange} />

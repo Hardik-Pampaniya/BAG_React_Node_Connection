@@ -37,6 +37,7 @@ const AllBook = () => {
   const handleEdit = (bookId) => {
     navigate(`/updateBook/${bookId}`);
   };
+  
 
   const handleDelete = async (bookId) => {
     try {
