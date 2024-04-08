@@ -5,6 +5,8 @@ import { Button, Table } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './AllBook.css'; // Custom CSS for styling
 import CookieMessage from './CookieMessage';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const AllBook = () => {
   const [profile, setProfile] = useState(null)
@@ -43,16 +45,24 @@ const AllBook = () => {
 
   const handleDelete = async (bookId) => {
     try {
-      await axios.delete(`http://localhost:5000/deleteBook/${bookId}`);
-      setBooks(books.filter(book => book.book_id !== bookId));
+      const confirmDelete = window.confirm("Are you sure you want to delete this book?");
+      if (confirmDelete) {
+        await axios.delete(`http://localhost:5000/deleteBook/${bookId}`);
+        setBooks(books.filter(book => book.book_id !== bookId));
+      }
     } catch (error) {
       console.error('Error deleting book:', error);
     }
   };
+  
+  
 
   const handleLogout = () => {
     localStorage.removeItem('accessToken');
     navigate('/');
+    toast.success('You have been logged out successfully!', {
+      position: "top-right" // Specify the position directly as a string
+    });
   };
 
   useEffect(() => {
@@ -85,8 +95,6 @@ const AllBook = () => {
   useEffect(()=>{
     fetchProfile()
   }, [])
-
-  console.log(profile);
 
   const fetchProfile = async () => {
     try {

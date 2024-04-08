@@ -5,6 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from 'react-router-dom';
 
 const AllAuthors = () => {
+  const [profile, setProfile] = useState(null)
   const [author, setAuthors] = useState([]);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
@@ -84,6 +85,33 @@ const AllAuthors = () => {
   }, [page, pageSize]);
 
 
+  useEffect(()=>{
+    fetchProfile()
+  }, [])
+
+  const fetchProfile = async () => {
+    try {
+      const token = localStorage.getItem('accessToken');
+     
+
+      const response = await axios.get(`http://localhost:5000/profile`, {
+        headers: {
+          Authorization: token,
+        }
+      });
+
+      if (response.status === 404) {
+        alert("No Books Found");
+        return;
+      }
+
+      setProfile(response.data.user);
+      
+    } catch (error) {
+      console.error('Error fetching books:', error);
+    }
+  };
+
 
 
   return (
@@ -93,6 +121,7 @@ const AllAuthors = () => {
         <h2 className="navbar-brand">All Authors</h2>
         <div className="d-flex align-items-center">
           <Button variant="primary" onClick={handleSearch}>Search</Button>
+          <img src={`http://localhost:5000/public/profilePics/${profile?.image}`} alt='profile' height={50} width={50} class="rounded-circle"/>
           <Button variant="warning" className="mx-3" onClick={handleLogout}>Log Out</Button>
         </div>
       </div>
